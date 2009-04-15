@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 25, 2007 1:51:18 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.TestOrder" table="testorder" >
+        <comment></comment>
+        <id name="orderId" type="int">
+            <column name="order_id" />
+            <generator class="identity" />
+        </id>
+        <property name="orderDesc" type="string">
+            <column name="orderDesc" >
+                <comment></comment>
+            </column>
+        </property>
+        <list name="lineItems" table="test_line_item">
+            <key column="order_id"/>
+            <list-index column="lineitem_idx"/>
+            <composite-element class="com.sparrow.domain.TestLineItem">
+                <property name="lineItemDesc"/>
+                <many-to-one name="product" class="com.sparrow.domain.Product" update="false" insert="false" fetch="select">
+		            <column name="product_id" not-null="true">
+		                <comment>FK to Product.Product_ID</comment>
+		            </column>
+		        </many-to-one>
+            </composite-element>
+        </list>
+     </class>
+</hibernate-mapping>

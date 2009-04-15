@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+                                 "http://castor.org/mapping.dtd">
+<mapping>
+  <class name="com.sparrow.domain.BookInfo">
+	<map-to xml="bookinfo"/>
+	<field name="productList" type="com.sparrow.domain.Book" collection="collection">
+	  <bind-xml name="book" location="booklist" node="element"/>
+	</field>
+  </class>
+  
+  
+  <class name="com.sparrow.domain.Book">
+    <map-to xml="book"/>
+    <field name="name" type="java.lang.String">
+      <bind-xml name="title" node="element" location="mainsection"></bind-xml>
+    </field>
+    <field name="description" type="java.lang.String">
+      <bind-xml name="plot" node="element" location="mainsection"></bind-xml>
+    </field>
+    <field name="isbn" type="java.lang.String">
+      <bind-xml name="isbn" node="element" ></bind-xml>
+    </field>
+    <field name="numOfPages">
+      <bind-xml name="pagecount" node="element" location="mainsection"></bind-xml>
+    </field>
+    <field name="castorAuthorList" type="java.lang.String" collection="collection">
+      <bind-xml name="displayname" location="mainsection/credits/credit/person" node="element"/>
+    </field>
+    <field name="castorSmallImageName">
+      <bind-xml name="thumbfilepath" node="element"></bind-xml>
+    </field>
+    
+  </class>
+  
+  
+</mapping>

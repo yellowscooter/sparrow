@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 11, 2007 4:25:10 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.Product" table="product" lazy="false">
+
+        <id name="productId" type="int">
+            <column name="product_id" />
+            <generator class="identity" />
+        </id>
+        <discriminator column="product_type" type="string"/>
+        
+        
+        <property name="name" type="string">
+            <column name="name" not-null="true"/>
+            
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="4000"/>
+            
+        </property>
+        
+        <property name="length" type="float">
+            <column name="length" precision="12" scale="0">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="width" type="float">
+            <column name="width" precision="12" scale="0">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="height" type="float">
+            <column name="height" precision="12" scale="0">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="numInStock" type="int">
+            <column name="num_in_stock">
+                <comment></comment>
+            </column>
+        </property>
+        <!-- Hibernate is not allowing me to  convert this to int
+        Throws a property accessor exception...not sure why since it worked with numInStock -->
+        <property name="availableInStock" type="java.lang.Short">
+            <column name="available_in_stock" />
+        </property>
+        <many-to-one name="author" class="com.sparrow.domain.Author"  cascade="all" lazy="false" >
+            <column name="author_id">
+                <comment></comment>
+            </column>
+        </many-to-one>
+        <!-- Company not used currently. So removing the mapping -->
+        <!-- <many-to-one name="company" class="com.sparrow.domain.Company"  cascade="all" lazy="false">
+            <column name="company_id">
+                <comment></comment>
+            </column>
+        </many-to-one> -->
+        <property name="imageSmallName" type="string">
+            <column name="image_small_name">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="imageLargeName" type="string">
+            <column name="image_large_name">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="status" type="string">
+    		<column name="status" />
+    	</property>
+
+        <set name="productCategories" inverse="true" lazy="false">
+            <key>
+                <column name="product_id" not-null="true">
+                    <comment></comment>
+                </column>
+            </key>
+            <one-to-many class="com.sparrow.domain.ProductCategory" />
+        </set>
+        
+        <one-to-one name="productSearch" class="com.sparrow.domain.ProductSearch"
+        			cascade="all" fetch="join">
+        </one-to-one>
+        
+        <many-to-one name="activatedBy" class="com.sparrow.domain.User" column="activated_by" cascade="none">
+        </many-to-one>
+        
+        <property name="activationDate" type="timestamp" column="activation_date"/>
+        
+        <set name="productReviews" lazy="false" cascade="all" order-by="product_review_id" fetch="select">
+            <key column="product_id" not-null="true" />
+            <one-to-many class="com.sparrow.domain.ProductReview" />
+        </set>
+        
+    </class>
+    <subclass name="com.sparrow.domain.Book" discriminator-value="BOOK"
+    	extends="com.sparrow.domain.Product">
+    	<property name="isbn" type="string">
+    		<column name="isbn" />
+    	</property>
+    	<property name="format" type="string">
+    		<column name="format" />
+    	</property>
+    	<property name="numOfPages" type="int">
+    		<column name="num_of_pages" />
+    	</property>
+    </subclass>
+</hibernate-mapping>

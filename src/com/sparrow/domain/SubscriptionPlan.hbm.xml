@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Dec 12, 2007 6:36:54 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.SubscriptionPlan" table="subscription_plan" lazy="false">
+        <comment></comment>
+        <id name="planId" type="int">
+            <column name="plan_id" />
+            <generator class="identity" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" length="50" not-null="true" unique="true">
+                <comment>The short plan name</comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description" not-null="true">
+                <comment>A brief description of the plan</comment>
+            </column>
+        </property>
+        <property name="maxRentalsPerMonth" type="int">
+            <column name="max_rentals_per_month" not-null="true">
+                <comment>The max product rentals allowed per month</comment>
+            </column>
+        </property>
+        <property name="fee" type="int">
+            <column name="fee" not-null="true">
+                <comment>The fee to be charged for the plan</comment>
+            </column>
+        </property>
+        <property name="period" type="int">
+            <column name="period" not-null="true">
+                <comment>Plan period, in months.e.g. 3 month, 12 month</comment>
+            </column>
+        </property>
+        <property name="status" type="string">
+            <column name="status" length="8" not-null="true">
+                <comment>ACTIVE-Plan in use, INACTIVE-Not in use</comment>
+            </column>
+        </property>
+        <property name="deposit" type="int">
+            <column name="deposit" not-null="true">
+                <comment>The refundable deposit required with the plan</comment>
+            </column>
+        </property>
+        <property name="maxProductsWithUser" type="int">
+            <column name="max_products_with_user">
+            </column>
+        </property>
+        
+    </class>
+</hibernate-mapping>

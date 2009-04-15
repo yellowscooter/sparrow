@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 17, 2008 6:31:05 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.Bill" table="bill">
+        <comment></comment>
+        <id name="billId" type="int">
+            <column name="bill_id" />
+            <generator class="identity" />
+        </id>
+        
+        <many-to-one name="user" class="com.sparrow.domain.User" fetch="select">
+            <column name="user_id" not-null="true"/>
+        </many-to-one>
+        
+        <many-to-one name="subscriptionPlan" class="com.sparrow.domain.SubscriptionPlan" fetch="select">
+            <column name="plan_id" not-null="true"/>
+        </many-to-one>
+        
+        <!--  <one-to-one name="payment" class="com.sparrow.domain.Payment" property-ref="bill" cascade="all"></one-to-one>-->
+        <set name="payments" lazy="false" cascade="all" fetch="select">
+            <key>
+                <column name="bill_id" not-null="true">
+                </column>
+            </key>
+            <one-to-many class="com.sparrow.domain.Payment" />
+        </set>
+        
+        <property name="amount" type="int">
+            <column name="amount" not-null="true">
+                <comment>Can be derived from fee_id, but storing here for audit.</comment>
+            </column>
+        </property>
+        <property name="billDate" type="timestamp">
+            <column name="bill_date" length="0" not-null="true">
+                <comment>DateTime when the bill was created.</comment>
+            </column>
+        </property>
+        <property name="status" type="string">
+            <column name="status" length="9">
+                <comment>Status of a Bill</comment>
+            </column>
+        </property>
+        <property name="comment" type="string">
+            <column name="comment" length="1000">
+                <comment>Comment by user or system bout the bill</comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="1000">
+                <comment>Detail description of the bill</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

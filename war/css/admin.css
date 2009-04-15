@@ -1,0 +1,32 @@
+body {
+	font-family: Verdana, Geneva, Arial, helvetica, sans-serif;
+	font-size: 12px;
+}
+
+td {
+	font-family: Verdana, Geneva, Arial, helvetica, sans-serif;
+}
+
+th {
+	font-family: Verdana, Geneva, Arial, helvetica, sans-serif;
+	background-color: #33CC00;
+}
+
+.odd {
+	background-color: #CCCCCC;
+}
+.even {
+	background-color: #999999;
+}
+.validationError {
+	color: #FF0000;
+	font-weight: bold;
+}
+
+.warning {
+	background-color: red;
+}
+
+.expiredAccount {
+	background-color: orange;
+}

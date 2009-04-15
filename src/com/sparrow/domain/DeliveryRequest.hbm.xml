@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 29, 2007 8:11:56 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.DeliveryRequest" table="delivery_request" >
+
+        <id name="deliveryRequestId" type="int">
+            <column name="delivery_request_id" />
+            <generator class="identity" />
+        </id>
+        <!-- <property name="userId" type="int" update="false">
+            <column name="user_id" not-null="true">
+                <comment>User who send delivery request</comment>
+            </column>
+        </property> -->
+        
+        <many-to-one name="user" class="com.sparrow.domain.User" column="user_id" update="false" lazy="false" >
+        </many-to-one>
+        
+        <property name="requestDate" type="timestamp" update="false">
+            <column name="request_date" length="0" not-null="true">
+                <comment>DateTime when delivery request was made</comment>
+            </column>
+        </property>
+        <property name="status" type="string">
+            <column name="status" length="9">
+                <comment>Status of request</comment>
+            </column>
+        </property>
+        <property name="requestIntransitDate" type="timestamp">
+            <column name="request_intransit_date">
+                <comment>DateTime when request handled...but still in transit</comment>
+            </column>
+        </property>
+        <property name="requestCompleteDate" type="timestamp">
+            <column name="request_complete_date">
+                <comment>DateTime when delivery request completed</comment>
+            </column>
+        </property>
+        <property name="requestAppliedDate" type="timestamp">
+            <column name="request_applied_date">
+                <comment>Date to be used to check monthly rental limit</comment>
+            </column>
+        </property>
+        
+        <set name="userProductSet" inverse="true" cascade="save-update" lazy="false">
+        	<key column="delivery_request_id"/>
+        	<one-to-many class="com.sparrow.domain.UserProduct"/>
+        </set>
+    </class>
+</hibernate-mapping>

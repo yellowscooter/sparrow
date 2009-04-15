@@ -1,0 +1,17 @@
+# robots.txt for to disallow indexing of certain pages
+Sitemap: http://www.friendsofbooks.com/sitemap.xml
+
+User-agent: *
+Disallow: /login.jsp
+Disallow: /queue.htm		
+Disallow: /myaccount.htm	
+Disallow: /edituserprofile.htm		
+Disallow: /changepassword.htm	
+Disallow: /paymentinfo.htm		
+Disallow: /guard.htm	
+Disallow: /ajaxnewdeliveryrequest.htm	
+Disallow: /selectsubscriptionplan.htm	
+Disallow: /systemerror.htm	
+Disallow: /privileged/		
+Disallow: /phpbt
+Disallow: /adduser.htm	

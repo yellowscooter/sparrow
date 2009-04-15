@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 19, 2007 7:57:54 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.User" table="user" >
+        <comment></comment>
+        <id name="userId" type="int">
+            <column name="user_id" />
+            <generator class="identity" />
+        </id>
+        <version name="version" column="version" />
+        
+        <property name="username" type="string">
+            <column name="username" >
+                <comment></comment>
+            </column>
+        </property>
+        <property name="password" type="string">
+            <column name="password" >
+                <comment></comment>
+            </column>
+        </property>
+        <property name="firstname" type="string">
+            <column name="firstname" >
+                <comment></comment>
+            </column>
+        </property>
+        <property name="lastname" type="string">
+            <column name="lastname" >
+                <comment></comment>
+            </column>
+        </property>
+        <property name="accountEnabled" type="string">
+            <column name="enabled" >
+                <comment></comment>
+            </column>
+        </property>
+        <property name="gender" type="string">
+            <column name="gender" length="2">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="ageGroup" type="string">
+            <column name="age_group" length="6">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="phone" type="string">
+            <column name="phone" length="12">
+                <comment></comment>
+            </column>
+        </property>
+        
+        <property name="mobilePhone" type="string">
+            <column name="mobile_phone" length="10">
+                <comment></comment>
+            </column>
+        </property>
+        
+        <many-to-one name="city" class="com.sparrow.domain.City" column="city_id"
+        			 lazy="false" cascade="none" />
+
+        <property name="paymentMethod" type="string">
+            <column name="payment_method" length="3">
+                <comment>CC-Credit Card, CK-Check, DD- Demand Draft</comment>
+            </column>
+        </property>
+        <property name="submissionCount" type="integer">
+            <column name="submission_count">
+                <comment>Count of books submitted by the user</comment>
+            </column>
+        </property>
+        <property name="checkoutCount" type="integer">
+            <column name="checkout_count">
+                <comment>Count of books currently checked out by the user</comment>
+            </column>
+        </property>
+        
+        <property name="accountCreateDate" column="account_create_date" 
+        			type="timestamp" update="false"/>
+        
+        <!-- Hibernate should not update last login date...it updates the date each time User object is saved.
+        The date is updated using jdbc in utilDao -->
+        <property name="lastLoginDate" type="timestamp" update="false">
+            <column name="last_login_date" length="0" >
+                <comment>Last date when the user logged into his/her account</comment>
+            </column>
+        </property>
+        
+        <property name="startDate" type="timestamp">
+            <column name="start_date" length="0">
+                <comment>Date when user membership begins</comment>
+            </column>
+        </property>
+        <property name="expirationDate" type="timestamp">
+            <column name="expiration_date" length="0">
+                <comment>Date when user membership ends</comment>
+            </column>
+        </property>
+        
+        
+        <property name="acceptTerms" type="string" column="accept_terms"/>
+        
+        <property name="status" type="string" column="status"/>
+        <property name="statusUpdatedBy" type="integer" column="status_updated_by"/>
+        <property name="statusUpdateDate" type="timestamp" column="status_update_date"/>
+        
+        <!-- <one-to-one name="billingAddress" class="com.sparrow.domain.Address" cascade="merge" lazy="false"/> -->
+        <many-to-one name="billingAddress" class="com.sparrow.domain.Address" column="billing_address_id" 
+        			 cascade="all" lazy="false"/>
+        
+        <many-to-one name="shippingAddress" class="com.sparrow.domain.Address" column="shipping_address_id"
+        			 cascade="all" lazy="false"/>
+        
+        <!-- <list name="productRequests" inverse="true" outer-join="true" lazy="false">
+            <key column="user_id" not-null="true" />
+            <list-index column="priority"/> 
+            <one-to-many class="com.sparrow.domain.ProductRequest" />
+        </list> -->
+        <list name="productRequests" table="product_request" lazy="false" cascade="persist,delete">
+        	<key column="user_id" />
+        	<list-index column="priority" />
+        	<composite-element
+        		class="com.sparrow.domain.ProductRequest">
+        		<many-to-one name="product"
+        			class="com.sparrow.domain.Product">
+        			<column name="product_id" not-null="true">
+        				<comment>FK to Product.Product_ID</comment>
+        			</column>
+        		</many-to-one>
+        		<property name="addDate" column="add_date"></property>
+        	</composite-element>
+        </list>
+
+        <set name="userRoles" lazy="false" cascade="delete">
+            <key>
+                <column name="user_id" not-null="true">
+                    <comment></comment>
+                </column>
+            </key>
+            <one-to-many class="com.sparrow.domain.UserRole" />
+        </set>
+        
+        <many-to-one name="subscriptionPlan" class="com.sparrow.domain.SubscriptionPlan" column="plan_id" 
+        			 cascade="none" lazy="false"/>
+        			 
+        <set name="payments" lazy="true">
+            <key>
+                <column name="user_id" not-null="true">
+                </column>
+            </key>
+            <one-to-many class="com.sparrow.domain.Payment" />
+        </set>
+
+        <set name="bills" lazy="false" cascade="save-update" order-by="bill_id">
+            <key>
+                <column name="user_id" not-null="true">
+                </column>
+            </key>
+            <one-to-many class="com.sparrow.domain.Bill" />
+        </set>
+        
+        <set name="userNotes" lazy="false" cascade="all" order-by="user_note_id" fetch="select">
+            <key column="user_id" not-null="true" />
+            <one-to-many class="com.sparrow.domain.UserNote" />
+        </set>
+        
+        <set name="userProducts" lazy="false" cascade="all" order-by="user_product_id" fetch="select" inverse="true">
+            <key column="user_id" not-null="true" />
+            <one-to-many class="com.sparrow.domain.UserProduct" />
+        </set>
+        
+        <property name="deliveryInstructions" type="string" column="delivery_instructions"/>
+        
+    </class>
+</hibernate-mapping>

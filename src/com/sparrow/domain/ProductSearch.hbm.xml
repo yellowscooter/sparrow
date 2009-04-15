@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 21, 2008 10:51:01 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.ProductSearch" table="product_search">
+        <comment></comment>
+        <id name="productId" type="int">
+            <column name="product_id" />
+            <generator class="assigned" />
+        </id>
+        
+        <property name="productName" type="string">
+            <column name="product_name" not-null="true">
+                <comment>Product name, e.g. Title of book</comment>
+            </column>
+        </property>
+        
+        <property name="productDesc" type="string">
+            <column name="product_desc" length="4000">
+                <comment>Product description, e.g. book summary</comment>
+            </column>
+        </property>
+        
+        <property name="productIsbn" type="string">
+            <column name="product_isbn" >
+            </column>
+        </property>        
+        
+        <property name="authorFullName" type="string">
+            <column name="author_full_name" >
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

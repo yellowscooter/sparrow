@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<!--
+  - DispatcherServlet application context for the Spring web MVC web tier.
+  -->
+<beans>
+	<!-- Configurer that replaces ${...} placeholders with values from properties files -->
+	<!-- (in this case, mail and JDBC related properties) -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>/WEB-INF/SystemProperties.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<!-- ========================= VIEW DEFINITIONS ========================= -->
+
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+		<property name="prefix" value="/WEB-INF/jsp/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+
+
+	<!-- ========================= DEFINITIONS OF PUBLIC CONTROLLERS ========================= -->
+
+	<!-- no 'id' required, HandlerMapping beans are automatically detected by the DispatcherServlet -->
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <value>
+            /browseCatalog.htm=browseCatalogController
+            /ajaxaddtoqueue.htm=addToQueueController
+            /queue.htm=queueController
+            /adduser.htm=addUserFormController
+            /howitworks.htm=howItWorksController
+            /myaccount.htm=myAccountController
+            /edituserprofile.htm=editUserProfileController
+            /changepassword.htm=changePasswordController
+            /paymentinfo.htm=paymentInfoController
+            /guard.htm=webApplicationGuardController
+            /ajaxnewdeliveryrequest.htm=newDeliveryRequestController
+            /selectsubscriptionplan.htm=selectSubscriptionPlanFormController
+            /ccpaymentstatus.htm=ccPaymentStatusController
+            /authorlist.htm=authorListController
+            /faq.htm=faqController
+            /welcome.htm=welcomeController
+            /contact.htm=contactUsController
+            /about.htm=aboutController
+            /product.htm=productDetailController
+            /addreview.htm=addReviewFormController
+            /systemerror.htm=systemErrorController
+            /privileged/admin/adminhome.htm=adminHomeController
+            /privileged/admin/addbook.htm=addBookFormController
+            /privileged/admin/addauthor.htm=addAuthorFormController
+            /privileged/admin/editbook.htm=editBookFormController
+            /privileged/admin/productlist.htm=productListController
+            /privileged/admin/addproductinstance.htm=addProductInstanceFormController
+            /privileged/admin/homeproductlist.htm=homeProductListMaintController
+            /privileged/admin/activateproduct.htm=productActivationController
+            /privileged/admin/userlist.htm=userListController
+            /privileged/admin/userpaymentslist.htm=userPaymentListController
+            /privileged/admin/userbilllist.htm=userBillListController
+            /privileged/admin/createuserbill.htm=createUserBillController
+            /privileged/admin/userpayment.htm=userPaymentController
+            /privileged/admin/deliveryrequestlist.htm=deliveryRequestListController
+            /privileged/admin/processdeliveryrequest.htm=deliveryRequestController
+            /privileged/admin/checkout.htm=checkoutController
+            /privileged/admin/return.htm=returnController
+            /privileged/admin/loadproducts.htm=loadProductsFromXMLController
+            /privileged/admin/updateuserstate.htm=updateUserStateController
+            /privileged/admin/userdetails.htm=userDetailsController
+            /privileged/admin/reports.htm=reportsController
+            </value>
+        </property>
+    </bean>
+    
+    <!--
+	  - This bean resolves specific types of exception to corresponding error views.
+		- The default behaviour of DispatcherServlet is to propagate all exceptions to the
+		- servlet container: This will happen here with all other types of exception.
+		-->
+	<!--  Commenting out since error-page in web.xml is able to handle all type of exceptions -->
+	<!-- <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.springframework.dao.DataAccessException">common/systemFailure</prop>
+				<prop key="org.springframework.transaction.TransactionException">common/systemFailure</prop>
+				<prop key="org.hibernate.StaleObjectStateException">common/optimisticLockingFailure</prop>
+				<prop key="java.lang.Exception">common/systemFailure</prop>
+			</props>
+		</property>
+	</bean> -->
+	
+	<bean id="multipartResolver"
+    			class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    	<!-- one of the properties available; the maximum file size in bytes -->
+    	<property name="maxUploadSize" value="100000"/>
+	</bean>
+	
+	
+    <bean id="addAuthorFormController" class="com.sparrow.web.catalog.AddAuthorFormController">
+		<property name="formView" value="admin/catalog/addAuthorForm"/>
+		<property name="successView" value="admin/success"/>
+		<property name="commandName" value="author"/>
+		<property name="commandClass" value="com.sparrow.domain.Author"/>
+		<property name="validator" ref="authorValidator"/>
+		<property name="productService" ref="productService"/>
+	</bean>
+	
+    <bean id="addBookFormController" class="com.sparrow.web.catalog.AddBookFormController">
+		<property name="formView" value="admin/catalog/addBookForm"/>
+		<property name="successView" value="admin/success"/>
+		<property name="commandName" value="product"/>
+		<property name="commandClass" value="com.sparrow.domain.Book"/>
+		<property name="validator" ref="bookValidator"/>
+		<property name="productService" ref="productService"/>
+		<property name="categoryService" ref="categoryService"/>
+	</bean>
+	
+	<bean id="editBookFormController" class="com.sparrow.web.catalog.EditBookFormController">
+		<property name="formView" value="admin/catalog/addBookForm"/>
+		<property name="successView" value="admin/successpopup"/>
+		<property name="commandName" value="product"/>
+		<property name="commandClass" value="com.sparrow.domain.Book"/>
+		<property name="validator" ref="bookValidator"/>
+		<property name="productService" ref="productService"/>
+		<property name="categoryService" ref="categoryService"/>
+		<property name="sessionForm" value="true"/>
+	</bean>
+	
+	<bean id="adminHomeController" class="com.sparrow.web.catalog.AdminHomeController">
+	</bean>
+	
+	<bean id="productListController" class="com.sparrow.web.catalog.ProductListController">
+		<property name="formView" value="admin/catalog/productList"/>
+		<property name="successView" value="admin/catalog/productList"/>
+		<property name="commandName" value="searchCriteria"/>
+		<property name="commandClass" value="com.sparrow.domain.SearchCriteria"/>
+		<property name="productService" ref="productService"/>
+		<property name="sessionForm" value="true"/>
+		<property name="bindOnNewForm" value="true"/>
+	</bean>
+	
+    <bean id="addProductInstanceFormController" class="com.sparrow.web.catalog.AddProductInstanceFormController">
+		<property name="formView" value="admin/catalog/addProductInstance"/>
+		<property name="successView" value="admin/success"/>
+		<property name="commandName" value="productInstance"/>
+		<property name="commandClass" value="com.sparrow.domain.ProductInstance"/>
+		<property name="validator" ref="productInstanceValidator"/>
+		<property name="productService" ref="productService"/>
+		<property name="userService" ref="userService"/>
+	</bean>
+	
+	<!-- sessionForm and bindOnNewForm are set to true since we want to display the search string
+	when the user navigates to next or prev page -->
+	<bean id="browseCatalogController" class="com.sparrow.web.catalog.BrowseCatalogController">
+		<property name="formView" value="public/catalog/browseCatalog"/>
+		<property name="successView" value="public/catalog/browseCatalog"/>
+		<property name="commandName" value="searchCriteria"/>
+		<property name="commandClass" value="com.sparrow.domain.SearchCriteria"/>
+		<property name="productService" ref="productService"/>
+		<property name="categoryService" ref="categoryService"/>
+		<property name="homeProductService" ref="homeProductService"/>
+		<property name="sessionForm" value="true"/>
+		<property name="bindOnNewForm" value="true"/>
+		<property name="validator" ref="searchCriteriaValidator"/>
+	</bean>
+	
+	<bean id="addToQueueController" class="com.sparrow.web.queue.AddToQueueController">
+		<property name="productService" ref="productService"/>
+		<property name="userService" ref="userService"/>
+	</bean>
+	
+	<bean id="queueController" class="com.sparrow.web.queue.QueueController">
+	  <property name="userService" ref="userService"/>
+	  <property name="formView" value="public/catalog/queue"/>
+	  <property name="commandName" value="searchCriteria"/>
+	  <property name="commandClass" value="com.sparrow.domain.SearchCriteria"/>
+	</bean>
+	
+	<bean id="howItWorksController" class="com.sparrow.web.common.HowItWorksController">
+		<property name="formView" value="public/common/howItWorks"/>
+		<property name="commandName" value="searchCriteria"/>
+		<property name="commandClass" value="com.sparrow.domain.SearchCriteria"/>
+		<property name="subscriptionPlanService" ref="subscriptionPlanService"/>
+	</bean>
+	
+	<bean id="myAccountController" class="com.sparrow.web.user.MyAccountController">
+		<property name="formView" value="public/user/myAccount"/>
+		<property name="commandName" value="searchCriteria"/>
+		<property name="commandClass" value="com.sparrow.domain.SearchCriteria"/>
+		<property name="successView" value="public/user/myAccount"/>
+	</bean>
+	
+	<bean id="editUserProfileController" class="com.sparrow.web.user.EditUserProfileController">
+	  <property name="formView" value="public/user/editUserProfile"/>
+	  <property name="commandName" value="user"/>
+	  <property name="successView" value="forward:myaccount.htm"/>
+	  <property name="commandClass" value="com.sparrow.domain.User"/>
+	  <property name="userService" ref="userService"/>
+	  <property name="validator" ref="userValidator"/>
+	</bean>	
+	
+	<bean id="addUserFormController" class="com.sparrow.web.user.AddUserFormController">
+	  <property name="userService" ref="userService"/>
+	  <property name="formView" value="public/user/addUser"/>
+	  <property name="successView" value="redirect:selectsubscriptionplan.htm"/>
+	  <property name="commandName" value="user"/>
+	  <property name="commandClass" value="com.sparrow.domain.User"/>
+	  <property name="validator" ref="userValidator"/>
+	</bean>
+	
+	<bean id="selectSubscriptionPlanFormController" class="com.sparrow.web.user.SelectSubscriptionPlanFormController">
+	  <property name="subscriptionPlanService" ref="subscriptionPlanService"/>
+	  <property name="userService" ref="userService"/>
+	</bean>
+	
+	<bean id="changePasswordController" class="com.sparrow.web.user.ChangePasswordController">
+	  <property name="formView" value="public/user/changePassword"/>
+	  <property name="commandName" value="changePassword"/>
+  	  <property name="commandClass" value="com.sparrow.domain.ChangePassword"/>
+	  <property name="successView" value="forward:myaccount.htm"/>
+	  <property name="userService" ref="userService"/>
+	  <property name="validator" ref="changePasswordValidator"/>
+	</bean>	
+	
+	<bean id="paymentInfoController" class="com.sparrow.web.payment.PaymentInfoController">
+	  <property name="formView" value="public/payment/paymentInfoNocc"/>
+	  <property name="successView" value="public/payment/paymentSuccess"/>
+	  <property name="commandName" value="paymentInfo"/>
+  	  <property name="commandClass" value="com.sparrow.domain.PaymentInfo"/>
+  	  <property name="paymentService" ref="paymentService"/>
+  	  <property name="userService" ref="userService"/>
+  	  <property name="validator" ref="paymentValidator"/>
+	</bean>
+		
+	<bean id="ccPaymentStatusController" class="com.sparrow.web.payment.EPaymentStatusController">
+  	  <property name="userService" ref="userService"/>	
+  	  <property name="mailUtil" ref="mailUtil"/>
+  	  <property name="paymentService" ref="paymentService"/>
+	</bean>
+	
+	<!-- For some reason i am unable to read the SystemProperties file from this config.
+	 So adding the guardKey value here directly -->
+	<bean id="webApplicationGuardController" class="com.sparrow.web.common.WebApplicationGuardController">
+	  <property name="formView" value="common/guard"/>
+	  <property name="successView" value="redirect:/browseCatalog.htm"/>
+	  <property name="commandName" value="guardKeyHolder"/>
+  	  <property name="commandClass" value="com.sparrow.domain.GuardKeyHolder"/>
+  	  <property name="guardKey" value="pirates"/>
+  	  <property name="sessionForm" value="true"/>
+  	  <property name="bindOnNewForm" value="true"/>
+	</bean>
+	
+	<bean id="homeProductListMaintController" class="com.sparrow.web.catalog.HomeProductListMaintController">
+	  <property name="homeProductService" ref="homeProductService"/>
+	</bean>
+	
+	<bean id="productActivationController" class="com.sparrow.web.catalog.ProductActivationController">
+	  <property name="productService" ref="productService"/>	
+	  <property name="successView" value="admin/successpopup"/>
+      <property name="categoryService" ref="categoryService"/>
+	</bean>
+	
+	<bean id="userListController" class="com.sparrow.web.user.UserListController">
+	  <property name="userService" ref="userService"/>	
+	  <property name="successView" value="admin/user/userList"/>
+	</bean>
+	
+	<bean id="authorListController" class="com.sparrow.web.catalog.AuthorListController">
+	  <property name="formView" value="public/catalog/authorList"/>
+	  <property name="productService" ref="productService"/>	
+	  <property name="categoryService" ref="categoryService"/>
+	  <property name="commandName" value="searchCriteria"/>
+      <property name="commandClass" value="com.sparrow.domain.SearchCriteria"/>
+	  <property name="successView" value="public/catalog/authorList"/>
+	</bean>
+
+	<bean id="userPaymentListController" class="com.sparrow.web.user.UserPaymentListController">
+	  <property name="userService" ref="userService"/>	
+	</bean>
+	
+	<bean id="userBillListController" class="com.sparrow.web.user.UserBillListController">
+	  <property name="userService" ref="userService"/>	
+	</bean>	
+	
+	<bean id="createUserBillController" class="com.sparrow.web.bill.CreateUserBillController">
+	  <property name="userService" ref="userService"/>
+	  <property name="billService" ref="billService"/>	
+	  <property name="mailUtil" ref="mailUtil"/>
+	</bean>	
+	
+	<bean id="userPaymentController" class="com.sparrow.web.user.UserPaymentController">
+	  <property name="sessionForm" value="true"/>
+	  <property name="formView" value="admin/user/userPayment"/>
+	  <property name="paymentService" ref="paymentService"/>	
+	  <property name="userService" ref="userService"/>	
+	  <property name="commandName" value="payment"/>
+  	  <property name="commandClass" value="com.sparrow.domain.Payment"/>
+	  <property name="successView" value="admin/successpopupParentRefresh"/>
+	</bean>
+	
+	<bean id="deliveryRequestListController" class="com.sparrow.web.deliveryrequest.DeliveryRequestListController">
+	  <property name="deliveryRequestService" ref="deliveryRequestService"/>	
+	  <property name="successView" value="admin/deliveryrequest/deliveryRequestList"/>
+	</bean>
+	
+	<bean id="deliveryRequestController" class="com.sparrow.web.deliveryrequest.DeliveryRequestController">
+	  <property name="deliveryRequestService" ref="deliveryRequestService"/>	
+	  <property name="userService" ref="userService"/>	
+	  <property name="successView" value="admin/deliveryrequest/processDeliveryRequest"/>
+	</bean>
+	
+	<bean id="checkoutController" class="com.sparrow.web.deliveryrequest.CheckoutController">
+      <property name="formView" value="admin/deliveryrequest/checkout"/>
+      <property name="commandName" value="checkoutInfo"/>
+  	  <property name="commandClass" value="com.sparrow.domain.CheckoutInfo"/>
+	  <property name="deliveryRequestService" ref="deliveryRequestService"/>	
+	  <property name="userService" ref="userService"/>	
+	  <property name="productService" ref="productService"/>	
+	  <property name="successView" value="admin/deliveryrequest/processDeliveryRequestComplete"/>
+	  <property name="validator" ref="checkoutValidator"/>
+	</bean>
+	
+	<bean id="newDeliveryRequestController" class="com.sparrow.web.deliveryrequest.NewDeliveryRequestController">
+	  <property name="deliveryRequestService" ref="deliveryRequestService"/>
+	  <property name="recommendedBooksInBookshelf" value="${recommendedBooksInBookshelf}"/>
+	  <property name="mailUtil" ref="mailUtil"/>
+	</bean>
+	
+	<bean id="returnController" class="com.sparrow.web.deliveryrequest.ReturnController">
+	  <!-- <property name="formView" value="admin/deliveryrequest/return"/>
+      <property name="commandName" value="returnInfo"/>
+  	  <property name="commandClass" value="com.sparrow.domain.ReturnInfo"/> -->
+	  <property name="deliveryRequestService" ref="deliveryRequestService"/>	
+  	  <property name="productService" ref="productService"/>	
+	  <property name="validator" ref="returnValidator"/>
+	  <!-- <property name="successView" value="admin/success"/> -->
+	</bean>
+	
+	<bean id="faqController" class="com.sparrow.web.common.FaqController">
+	</bean>
+	
+	<bean id="contactUsController" class="com.sparrow.web.common.ContactUsController">
+	  <property name="formView" value="public/common/contactUs"/>
+	  <property name="successView" value="redirect:contact.htm?mailSuccess=Y"/>
+	  <property name="commandName" value="email"/>
+	  <property name="commandClass" value="com.sparrow.domain.EmailMessage"/>
+	  <property name="validator" ref="emailMessageValidator"/>
+	  <property name="mailUtil" ref="mailUtil"/>
+	</bean>
+	
+	<bean id="aboutController" class="com.sparrow.web.common.AboutController">
+	</bean>
+	
+	<bean id="systemErrorController" class="com.sparrow.web.common.SystemErrorController">
+	  <property name="mailUtil" ref="mailUtil"/>
+	</bean>
+	<bean id="welcomeController" class="com.sparrow.web.common.WelcomeController">
+	</bean>
+	
+	<bean id="loadProductsFromXMLController" class="com.sparrow.web.catalog.LoadProductsFromXMLController">
+	  <property name="productService" ref="productService"/>
+	</bean>
+	
+	<bean id="updateUserStateController" class="com.sparrow.web.user.UpdateUserStateController">
+	  <property name="userService" ref="userService"/>	
+	  <property name="successView" value="admin/successpopup"/>
+	</bean>
+	
+	<bean id="userDetailsController" class="com.sparrow.web.user.UserDetailsController">
+	  <property name="userService" ref="userService"/>	
+	  <property name="deliveryRequestService" ref="deliveryRequestService"/>
+	  <property name="productService" ref="productService"/>
+	</bean>
+	
+	<bean id="reportsController" class="com.sparrow.web.common.ReportsController">
+	  <property name="userService" ref="userService"/>	
+	  <property name="productService" ref="productService"/>	
+	</bean>
+	
+	<bean id="productDetailController" class="com.sparrow.web.catalog.ProductDetailController">
+	  <property name="formView" value="public/catalog/productDetail"/>
+	  <property name="commandName" value="searchCriteria"/>
+	  <property name="commandClass" value="com.sparrow.domain.SearchCriteria"/>
+	  <property name="productService" ref="productService"/>
+	  <property name="categoryService" ref="categoryService"/>
+	</bean>
+	
+	<bean id="addReviewFormController" class="com.sparrow.web.catalog.AddReviewFormController">
+	  <property name="productService" ref="productService"/>
+	</bean>
+	
+	
+</beans>

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 11, 2007 4:25:10 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.Category" table="category" >
+        <comment></comment>
+        <id name="categoryId" type="int">
+            <column name="category_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="parentCategory" class="com.sparrow.domain.Category" >
+            <column name="parent_id" >
+                <comment></comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" length="50" not-null="true" unique="true">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description">
+                <comment></comment>
+            </column>
+        </property>
+        
+        <property name="categoryType" type="string">
+            <column name="category_type" />
+        </property>
+        
+        <set name="productCategories" inverse="true">
+            <key>
+                <column name="category_id" not-null="true">
+                    <comment></comment>
+                </column>
+            </key>
+            <one-to-many class="com.sparrow.domain.ProductCategory" />
+        </set>
+        <set name="childCategories" inverse="true">
+            <key>
+                <column name="parent_id" not-null="true">
+                    <comment></comment>
+                </column>
+            </key>
+            <one-to-many class="com.sparrow.domain.Category" />
+        </set>
+    </class>
+</hibernate-mapping>

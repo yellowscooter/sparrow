@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app PUBLIC
+          "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+          "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  <display-name>Sparrow</display-name>
+
+  <description></description>
+
+  <!--
+	  - Location of the XML file that defines the root application context.
+	  - Applied by ContextLoaderServlet.
+  -->
+  <context-param>
+	<param-name>contextConfigLocation</param-name>
+	<param-value>
+			/WEB-INF/dataAccessContext.xml
+			/WEB-INF/applicationContext.xml
+			/WEB-INF/applicationContext-acegi-security.xml
+	</param-value>
+  </context-param>
+  
+  <!--  to be removed in production setting -->
+  <!-- <filter>
+	  <filter-name>ApplicationGuardFilter</filter-name>
+	  <filter-class>com.sparrow.web.common.WebApplicationGuardFilter</filter-class>
+  </filter> -->
+  <!-- Filter to intercept ajax requests -->
+  <filter>
+	  <filter-name>acejiAjaxFilter</filter-name>
+	  <filter-class>com.sparrow.web.common.AjaxAcejiFilter</filter-class>
+  </filter>
+  
+  <filter>
+	  <filter-name>Acegi Filter Chain Proxy</filter-name>
+	  <filter-class>org.acegisecurity.util.FilterToBeanProxy</filter-class>
+	  <init-param>
+	    <param-name>targetClass</param-name>
+	    <param-value>org.acegisecurity.util.FilterChainProxy</param-value>
+	  </init-param>
+  </filter>
+  
+  <filter>
+	  <filter-name>disableUrlSessionFilter</filter-name>
+	  <filter-class>com.sparrow.web.common.DisableUrlSessionFilter</filter-class>
+  </filter>
+  
+  <filter>
+      <filter-name>UrlRewriteFilter</filter-name>
+      <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+      <init-param>
+          <param-name>logLevel</param-name>
+          <param-value>DEBUG</param-value>
+      </init-param>
+  </filter>
+  
+  <!-- <filter-mapping>
+	  <filter-name>ApplicationGuardFilter</filter-name>
+	  <url-pattern>/*</url-pattern>
+  </filter-mapping> -->
+  
+  <filter-mapping>
+	  <filter-name>acejiAjaxFilter</filter-name>
+	  <url-pattern>/j_ajax_acegi_security_check</url-pattern>
+  </filter-mapping>
+  
+  <filter-mapping>
+	  <filter-name>Acegi Filter Chain Proxy</filter-name>
+	  <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <filter-mapping>
+	  <filter-name>disableUrlSessionFilter</filter-name>
+	  <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <filter-mapping>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+
+  <!--
+	  - Loads the root application context of this web app at startup,
+	  - by default from "/WEB-INF/applicationContext.xml".
+		- Note that it is preferable to use ContextLoaderListener in a servlet container
+		- that follows the Servlet 2.4 initialization order (most Servlet 2.3 containers do).
+		-
+	  - Use WebApplicationContextUtils.getWebApplicationContext(servletContext)
+	  - to access it anywhere in the web application, outside of the framework.
+	  -
+	  - The root context is the parent of all servlet-specific contexts.
+	  - This means that its beans are automatically available in these child contexts,
+	  - both for getBean(name) calls and (external) bean references.
+	-->
+  <listener>
+	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+  <servlet>
+    <servlet-name>initialization.servlet</servlet-name>
+    <servlet-class>com.sparrow.web.common.InitializationServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet>
+    <servlet-name>sparrow</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>initialization.servlet</servlet-name>
+    <url-pattern>/notallowed</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>sparrow</servlet-name>
+    <url-pattern>*.htm</url-pattern>
+  </servlet-mapping>
+  
+  <session-config>
+	<session-timeout>120</session-timeout>
+  </session-config>
+
+  <error-page>
+  	<exception-type>java.lang.Throwable</exception-type>
+  	<location>/systemerror.htm</location>
+  </error-page>
+  
+  <!-- The Usual Welcome File List -->
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  
+
+</web-app>

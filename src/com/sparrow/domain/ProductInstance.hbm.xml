@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jun 15, 2007 4:29:09 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.ProductInstance" table="product_instance" >
+        <comment></comment>
+        <id name="productInstanceId" type="int">
+            <column name="product_instance_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="product" class="com.sparrow.domain.Product" cascade="save-update" lazy="false">
+            <column name="product_id" not-null="true">
+                <comment></comment>
+            </column>
+        </many-to-one>
+        <property name="status" type="string">
+            <column name="status" >
+                <comment>C - Checkedout, A - Available, D - Deleted</comment>
+            </column>
+        </property>
+
+        <one-to-one name="userProduct" class="com.sparrow.domain.UserProduct" 
+        			property-ref="productInstance" lazy="false"/>
+        
+        <many-to-one name="submittedBy" class="com.sparrow.domain.User" fetch="select">
+            <column name="submitted_by">
+                <comment>If this instance was user submitted, then user_id is populated, else null</comment>
+            </column>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

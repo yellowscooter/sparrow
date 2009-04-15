@@ -1,0 +1,20 @@
+
+
+<html>
+<body>
+<div>
+Hello ${user.firstname} ${user.lastname},<br><br> 
+
+Your payment processing has failed. You will receive an email from our Payment Gateway, CCAvenue, with 
+details related to your payment.<br><br> 
+
+Thank you,<br><br> 
+
+FriendsOfBooks&#0153;<br>
+Web: <a href="http://www.friendsofbooks.com">http://www.friendsofbooks.com</a><br> 
+Email: cs@friendsofbooks.com<br>
+
+</div>
+</body>
+
+</html>

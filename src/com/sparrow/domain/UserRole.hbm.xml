@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 19, 2007 7:57:54 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.UserRole" table="user_role">
+        <comment></comment>
+        <composite-id name="id" class="com.sparrow.domain.UserRoleId" unsaved-value="undefined">
+            <key-property name="userId" type="int" >
+                <column name="user_id" />
+            </key-property>
+            <key-property name="role" type="string">
+                <column name="role" length="30" />
+            </key-property>
+        </composite-id>
+    </class>
+</hibernate-mapping>

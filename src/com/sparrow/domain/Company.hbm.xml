@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 11, 2007 4:25:10 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.Company" table="company" >
+        <comment></comment>
+        <id name="companyId" type="int">
+            <column name="company_id" />
+            <generator class="identity" />
+        </id>
+        <property name="companyName" type="string">
+            <column name="company_name" length="100" not-null="true" unique="true">
+                <comment></comment>
+            </column>
+        </property>
+        <set name="products" inverse="true">
+            <key>
+                <column name="company_id">
+                    <comment></comment>
+                </column>
+            </key>
+            <one-to-many class="com.sparrow.domain.Product" />
+        </set>
+    </class>
+</hibernate-mapping>

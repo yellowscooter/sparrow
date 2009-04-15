@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 25, 2007 1:51:18 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.Address" table="address" >
+        <comment></comment>
+        <id name="addressId" type="int">
+            <column name="address_id" />
+            <generator class="identity" />
+        </id>
+        <property name="street1" type="string">
+            <column name="street1" length="100" not-null="true">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="street2" type="string">
+            <column name="street2" length="100">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="city" type="string">
+            <column name="city" not-null="true">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="state" type="string">
+            <column name="state" not-null="true">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="postalCode" type="string">
+            <column name="postal_code">
+                <comment>i.e. the PIN code</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

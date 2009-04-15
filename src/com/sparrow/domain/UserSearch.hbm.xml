@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 30, 2008 6:08:13 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.UserSearch" table="user_search" >
+        <comment></comment>
+        <id name="searchId" type="int">
+            <column name="search_id" />
+            <generator class="identity" />
+        </id>
+        <property name="searchCriteria" type="string">
+            <column name="search_criteria" length="100" not-null="true">
+                <comment>The string the user entered to search for</comment>
+            </column>
+        </property>
+        <property name="searchDate" type="timestamp">
+            <column name="search_date" length="0">
+                <comment>Date when search was done</comment>
+            </column>
+        </property>
+        <property name="userId" type="java.lang.Integer">
+            <column name="user_id">
+                <comment>FK to User.user_id if user_id is available, else null</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

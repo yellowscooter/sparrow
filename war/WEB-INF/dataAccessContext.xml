@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<!--
+  - Application context definition for application data access layer.
+  - Accessed by business layer objects defined in "applicationContext.xml"
+  - (see web.xml's "contextConfigLocation").
+  -
+  - This version of the data access layer works on a combined database,
+  - using a local DataSource with DataSourceTransactionManager. It does not
+  - need any JTA support in the container: It will run as-is in plain Tomcat.
+  -->
+<beans>
+
+	<!-- Configurer that replaces ${...} placeholders with values from properties files -->
+	<!-- (in this case, mail and JDBC related properties) -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>/WEB-INF/jdbc.properties</value>
+				<value>/WEB-INF/SystemProperties.properties</value>
+				<value>/WEB-INF/mail.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- ========================= RESOURCE DEFINITIONS ========================= -->
+	<!--  Using c3p0 pool. Using all default properties at the moment. -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${jdbc.driverClassName}"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="user" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<property name="minPoolSize" value="5"/>
+		<property name="maxPoolSize" value="30"/>
+		<!-- Every 60 mins pool will try to reduce its size -->
+		<property name="maxIdleTimeExcessConnections" value="3600"/>
+		<property name="preferredTestQuery" value="select count(1) from city"/>
+		<!-- Test connections every 4 hours -->  
+		<property name="idleConnectionTestPeriod" value="14400"/>
+		<property name="testConnectionOnCheckin" value="true"/>
+		<property name="maxStatements" value="100"/>
+		
+	</bean>
+
+	<!-- Hibernate SessionFactory -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation">
+			<value>/WEB-INF/hibernate.cfg.xml</value>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
+				<!-- Set this property to false in production. -->
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.generate_statistics">false</prop>
+				<prop key="hibernate.max_fetch_depth">2</prop>
+			</props>
+		</property>
+		<property name="eventListeners">
+			<map>
+				<entry key="merge">
+					<bean class="org.springframework.orm.hibernate3.support.IdTransferringMergeEventListener"/>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+
+	<!-- Transaction manager for a single Hibernate SessionFactory (alternative to JTA) -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+
+
+
+	<!-- ========================= DAO DEFINITIONS:  ========================= -->
+
+	<bean id="categoryDao" class="com.sparrow.dao.catalog.hibernate.CategoryDAOImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="productDao" class="com.sparrow.dao.catalog.hibernate.ProductDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    	<property name="productCountInRecentlyAddedList" value="${productCountInRecentlyAddedList}"/>
+
+	</bean>
+	
+	<bean id="userDao" class="com.sparrow.dao.user.hibernate.UserDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    	<property name="maxAllowedProductsPerDeliveryRequest" value="${maxAllowedProductsPerDeliveryRequest}"/>
+	</bean>
+	
+	<bean id="paymentDao" class="com.sparrow.dao.payment.hibernate.PaymentDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="homeProductDao" class="com.sparrow.dao.catalog.hibernate.HomeProductDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="deliveryRequestDao" class="com.sparrow.dao.deliveryrequest.hibernate.DeliveryRequestDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="subscriptionPlanDao" class="com.sparrow.dao.subscription.hibernate.SubscriptionPlanDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+
+	<bean id="billDao" class="com.sparrow.dao.bill.hibernate.BillDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="utilDao" class="com.sparrow.dao.util.jdbc.UtilDaoImpl">
+    	<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+
+</beans>

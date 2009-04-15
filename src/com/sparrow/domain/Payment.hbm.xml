@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 20, 2007 3:58:19 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.Payment" table="payment" lazy="false">
+        <comment></comment>
+        <id name="paymentId" type="int">
+            <column name="payment_id" />
+            <generator class="identity" />
+        </id>
+        
+        <discriminator column="payment_method" type="string"/>
+        
+        
+        <many-to-one name="bill" class="com.sparrow.domain.Bill" fetch="select" lazy="false">
+            <column name="bill_id"/>
+        </many-to-one>
+        
+        <many-to-one name="processedbyUser" class="com.sparrow.domain.User" fetch="select" lazy="false">
+            <column name="processedby_user_id"/>
+        </many-to-one>
+        
+        <property name="processedDate" type="timestamp" column="processed_date"/>
+        
+        <property name="paymentDate" type="timestamp" column="payment_date" update="false"/>
+        
+        
+        <property name="status" type="string">
+            <column name="status">
+                <comment>Y if payment was successful, else N</comment>
+            </column>
+        </property>
+        
+        <!-- <property name="verification" type="string">
+            <column name="verification">
+            </column>
+        </property> -->
+
+        <property name="comment" type="string">
+            <column name="comment" length="1000">
+                <comment>Comment by user who processed the draft/check/cash</comment>
+            </column>
+        </property>
+        
+        <subclass name="com.sparrow.domain.EPayment" discriminator-value="CC"
+    					extends="com.sparrow.domain.Payment">
+	    	<property name="ccConfirmationId" type="string">
+	            <column name="cc_confirmation_id" length="20">
+	                <comment>Confirmation of credit card payment approval.</comment>
+	            </column>
+	        </property>
+	        <property name="ccTxDate" type="timestamp">
+	            <column name="cc_tx_date" length="0">
+	                <comment>DateTime when the cc payment was processed</comment>
+	            </column>
+	        </property>
+    	</subclass>
+    	
+    	<subclass name="com.sparrow.domain.CheckPayment" discriminator-value="CK"
+    					extends="com.sparrow.domain.Payment">
+	    	<property name="checkNumber" type="string">
+            <column name="check_number" length="20">
+                <comment>Check number if payment by check.</comment>
+            </column>
+	        </property>
+	        <property name="checkBankName" type="string">
+	            <column name="check_bank_name" length="20">
+	                <comment>Check bank name if payment by check.</comment>
+	            </column>
+	        </property>
+    	</subclass>
+    	
+    	<subclass name="com.sparrow.domain.BankDraftPayment" discriminator-value="DD"
+    					extends="com.sparrow.domain.Payment">
+	    	<property name="draftNumber" type="string">
+	            <column name="draft_number" length="20">
+	                <comment>Draft number if payment by draft.</comment>
+	            </column>
+	        </property>
+	        <property name="draftBankName" type="string">
+	            <column name="draft_bank_name" length="20">
+	                <comment>Draft bank name if payment by check.</comment>
+	            </column>
+	        </property>
+    	</subclass>
+    	
+    	<subclass name="com.sparrow.domain.CashPayment" discriminator-value="CA"
+    					extends="com.sparrow.domain.Payment">
+    	</subclass>
+        
+    </class>
+</hibernate-mapping>

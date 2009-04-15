@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 25, 2007 1:51:18 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.UserProduct" table="user_product" >
+        <comment></comment>
+        <id name="userProductId" type="int">
+            <column name="user_product_id" />
+            <generator class="identity" />
+        </id>
+
+        <many-to-one name="productInstance" class="com.sparrow.domain.ProductInstance" lazy="false">
+            <column name="product_instance_id" unique="true">
+            </column>
+        </many-to-one>
+        
+        <many-to-one name="userByUserId" class="com.sparrow.domain.User" fetch="select" update="false">
+            <column name="user_id">
+                <comment>FK to User.user_id</comment>
+            </column>
+        </many-to-one>
+        
+        <many-to-one name="userByCheckoutUserId" class="com.sparrow.domain.User" fetch="select">
+            <column name="checkout_user_id">
+                <comment>Admin user who checked out the product</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="deliveryRequest" class="com.sparrow.domain.DeliveryRequest" >
+            <column name="delivery_request_id">
+            </column>
+        </many-to-one>
+        <property name="checkoutDate" type="timestamp">
+            <column name="checkout_date" length="0">
+                <comment>Date when product was checked out to member</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

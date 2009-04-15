@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 4, 2007 9:17:18 AM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.City" table="city">
+        <id name="cityId" type="int">
+            <column name="city_id" />
+            <generator class="identity" />
+        </id>
+
+        <property name="city" type="string" column="city"/>
+    </class>
+</hibernate-mapping>

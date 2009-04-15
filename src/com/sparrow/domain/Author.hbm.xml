@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 11, 2007 4:25:10 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.Author" table="author" >
+        <comment></comment>
+        <id name="authorId" type="int">
+            <column name="author_id" />
+            <generator class="identity" />
+        </id>
+        <property name="firstName" type="string">
+            <column name="first_name" length="30" not-null="true">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="lastName" type="string">
+            <column name="last_name" length="30" not-null="true">
+                <comment></comment>
+            </column>
+        </property>
+        <property name="fullName" type="string">
+            <column name="full_name">
+                <comment></comment>
+            </column>
+        </property>
+        <set name="products" inverse="true">
+            <key>
+                <column name="author_id">
+                    <comment></comment>
+                </column>
+            </key>
+            <one-to-many class="com.sparrow.domain.Product" />
+        </set>
+    </class>
+</hibernate-mapping>

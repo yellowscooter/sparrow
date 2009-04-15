@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Feb 5, 2009 2:16:29 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.ProductReview" table="product_review" catalog="sparrow">
+        <comment></comment>
+        <id name="productReviewId" type="int">
+            <column name="product_review_id" />
+            <generator class="assigned" />
+        </id>
+        <property name="productId" type="int">
+            <column name="product_id" not-null="true">
+                <comment>Product Id of reviewd product. FK to Product.product_id</comment>
+            </column>
+        </property>
+        <property name="reviewDate" type="timestamp">
+            <column name="review_date" length="0" not-null="true">
+                <comment>DateTime when the review was added.</comment>
+            </column>
+        </property>
+        <property name="userId" type="java.lang.Integer">
+            <column name="user_id">
+                <comment>User who added the review if the user was logged in. FK to User.user_id</comment>
+            </column>
+        </property>
+        <property name="reviewerName" type="string">
+            <column name="reviewer_name" length="100" not-null="true">
+                <comment>Name of person who added the review</comment>
+            </column>
+        </property>
+        <property name="reviewTitle" type="string">
+            <column name="review_title" length="100" not-null="true">
+                <comment>Title of the review</comment>
+            </column>
+        </property>
+        <property name="review" type="string">
+            <column name="review" length="4000" not-null="true">
+                <comment>The review text</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jun 15, 2007 4:29:09 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.UserProductHistory" table="user_product_history">
+        <comment></comment>
+        <id name="userProdHistId" type="int">
+            <column name="user_prod_hist_id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="userByUserId" class="com.sparrow.domain.User" fetch="select">
+            <column name="user_id" not-null="true">
+                <comment>The user who checked out this Product. FK to user.</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="productInstance" class="com.sparrow.domain.ProductInstance" fetch="select">
+            <column name="product_instance_id" not-null="true">
+                <comment>The product instance Id. FK to Product_Instance</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="userByCheckoutUserId" class="com.sparrow.domain.User" fetch="select">
+            <column name="checkout_user_id">
+                <comment>Admin user who checked out the product</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="userByReceiveUserId" class="com.sparrow.domain.User" fetch="select">
+            <column name="receive_user_id">
+                <comment>Admin user who received the product</comment>
+            </column>
+        </many-to-one>
+        <property name="checkoutDate" type="timestamp">
+            <column name="checkout_date" length="0">
+                <comment>Date when product was checked out to member</comment>
+            </column>
+        </property>
+        <property name="receiveDate" type="timestamp">
+            <column name="receive_date" length="0">
+                <comment>Date when the product was received from member</comment>
+            </column>
+        </property>
+        <property name="receiveComment" type="string">
+            <column name="receive_comment" length="4000">
+                <comment>Any comment by the admin when receiving the product</comment>
+            </column>
+        </property>
+        <many-to-one name="deliveryRequest" class="com.sparrow.domain.DeliveryRequest" >
+            <column name="delivery_request_id">
+            </column>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

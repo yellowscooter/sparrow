@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Sep 20, 2008 9:48:31 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.UserNote" table="user_note">
+        <comment></comment>
+        <id name="userNoteId" type="int">
+            <column name="user_note_id" />
+            <generator class="identity" />
+        </id>
+        <property name="noteDate" type="timestamp">
+            <column name="note_date" length="0" not-null="true">
+                <comment>DateTime when the note was added.</comment>
+            </column>
+        </property>
+        <property name="userId" type="int" insert="false" update="false">
+            <column name="user_id" not-null="true">
+                <comment>User to whom the note is attached. FK to User.user_id</comment>
+            </column>
+        </property>
+        <property name="note" type="string">
+            <column name="note" length="4000" not-null="true">
+                <comment></comment>
+            </column>
+        </property>
+        
+        <many-to-one name="addedByUser" class="com.sparrow.domain.User" fetch="select" lazy="false">
+            <column name="added_by_user_id"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

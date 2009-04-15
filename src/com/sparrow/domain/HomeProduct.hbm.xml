@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 6, 2007 3:07:38 PM by Hibernate Tools 3.2.0.b9 -->
+<hibernate-mapping>
+    <class name="com.sparrow.domain.HomeProduct" table="home_product" >
+		<id name="productId" type="int">
+            <column name="product_id" />
+            <generator class="foreign" >
+            	<param name="property">product</param>
+            </generator>
+       	</id>
+       	<one-to-one name="product" class="com.sparrow.domain.Product" constrained="true" cascade="none"/>    
+       	<property name="priority" type="int">
+            <column name="priority">
+                <comment></comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>
