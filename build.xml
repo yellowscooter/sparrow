@@ -1,0 +1,323 @@
+<?xml version="1.0"?>
+
+<project name="${app.name}" basedir="." default="usage">
+    <property file="build.properties"/>
+	
+	<!-- Set property to identify a DEV or PROD build -->
+	<condition property="doDevBuild">
+		<equals arg1="${build.type}" arg2="DEV" casesensitive="no" 
+			trim="yes" />
+	</condition>
+	
+	<condition property="doProdBuild">
+		<equals arg1="${build.type}" arg2="PROD" casesensitive="no" 
+			trim="yes" />
+	</condition>
+
+
+    <path id="master-classpath">
+        <fileset dir="${web.dir}/WEB-INF/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <!-- We need the servlet API classes:        -->
+        <!--   for Tomcat 4.1 use servlet.jar        -->
+        <!--   for Tomcat 5.0 use servlet-api.jar    -->
+        <!--   for Other app server - check the docs -->
+        <fileset dir="${appserver.home}/common/lib">
+            <include name="servlet*.jar"/>
+        	<include name="jsp-api.jar"/>
+        </fileset>
+        <pathelement path="${build.dir}"/>
+    </path>
+	
+	<path id="test-classpath">
+		<path refid="master-classpath"/>
+		<pathelement location="${vendor.dir}/junit/junit.jar"/>
+		<pathelement location="${vendor.dir}/spring/spring-mock.jar"/>
+		<pathelement path="${build.temp}/${build.temp.test}"/>
+		<pathelement path="${build.config}"/>
+		<!-- In applicationContext file, jdbc and other property files-->
+		<!-- are referenced as /WEB-INF/jdbc.properties -->
+		<!-- Adding web.dir also to the classpath so these files can be found-->
+		<pathelement path="${web.dir}"/>
+	</path>
+    <target name="usage" depends="init">
+        <echo message=""/>
+        <echo message="${app.name} build file"/>
+        <echo message="-----------------------------------"/>
+        <echo message=""/>
+        <echo message="Available targets are:"/>
+        <echo message=""/>
+        <echo message="compile     --> Build the application"/>
+    	<echo message="compileTests--> Build the application test cases"/>
+        <echo message="deploy    --> Deploy application as directory"/>
+        <echo message="deploywar --> Deploy application as a WAR file"/>
+    	<echo message="create.dist --> Creates a clean distribution"/>
+    	<echo message="tests --> Run all Junit tests"/>
+    	<echo message=""/>
+    </target>
+	
+	<target name="init" >
+		<tstamp/>
+		<echo>Build Type is doDevBuild = ${doDevBuild}, doProdBuild = ${doProdBuild}</echo>
+	</target>
+
+    <target name="makeDirs">
+	    <mkdir dir="${build.dist.root}" />
+		<mkdir dir="${build.dist.root}/application" />
+	</target>
+
+    <target name="compile" description="Compile main source tree java files" >
+        <mkdir dir="${build.dir}"/>
+        <javac destdir="${build.dir}" target="1.5" debug="true"
+               deprecation="false" optimize="false" failonerror="true">
+            <src path="${src.dir}"/>
+            <classpath refid="master-classpath"/>
+        </javac>
+    	<antcall target="copyHibernateMappings"></antcall>
+    	<antcall target="copyCastorMappings"></antcall>
+    </target>
+	
+	<target name="clean" >
+		<delete dir="${build.dir}"/>
+	</target>
+	<target name="cleanAll" depends="clean">
+		<delete dir="${build.dist.root}"/>
+		<delete dir="${build.temp}"/>
+		<!-- These files are different for dev and prod env, so cleaning up. Source exists in config dir-->
+		<delete file="${web.dir}/WEB-INF/jdbc.properties"/>
+		<delete file="${web.dir}/WEB-INF/applicationContext-acegi-security.xml"/>
+	</target>
+	
+	<target name="compileTests" depends="compile" description="Compile test source tree java files" >
+        <mkdir dir="${build.temp}/${build.temp.test}"/>
+        <javac destdir="${build.temp}/${build.temp.test}" target="1.5" debug="true"
+               deprecation="false" optimize="false" failonerror="true">
+            <src path="${src.test.dir}"/>
+            <classpath refid="test-classpath"/>
+        </javac>
+	</target>
+
+    <target name="makewar" depends="init, makeDirs, compile, copyConfig" description="Create the WAR file">
+        <war destfile="${build.dist.root}/application/${app.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
+            <fileset dir="${web.dir}">
+                <include name="**/*.*"/>
+            </fileset>
+        </war>
+    </target>
+	
+	<target name="create.dist" depends="cleanAll, makewar" description="Creates a clean distribution.">
+	</target>
+
+    <target name="deploy" depends="makewar" description="Deploy application">
+        <copy todir="${deploy.path}/${app.name}" preservelastmodified="true">
+            <fileset dir="${web.dir}">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="deploywar" depends="makewar" description="Deploy application as a WAR file">
+        <copy todir="${deploy.path}" preservelastmodified="true">
+            <fileset dir="${build.dist.root}/application">
+                <include name="*.war"/>
+            </fileset>
+        </copy>
+    </target>
+	
+	<!-- Copy the config files to WEB-INF -->
+	<target name="copyConfig">
+		<copy todir="${web.dir}/WEB-INF/" overwrite="no" filtering="true">
+			<fileset dir="${build.config}">
+				
+				
+				<include name="applicationContext-acegi-security.xml" />
+				<include name="hibernate.cfg.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${web.dir}/WEB-INF/classes" overwrite="no" filtering="true">
+			<fileset dir="${build.config}">
+				<include name="messages.properties" />
+			</fileset>
+		</copy>
+		<!-- Copy all velocity templates to classes folder -->
+		<copy todir="${web.dir}/WEB-INF/classes" overwrite="no" filtering="true">
+			<fileset dir="${build.config}/${build.velocity.templates}">
+				<include name="**/*.vm" />
+			</fileset>
+		</copy>
+		<antcall target="copyConfigDevSpecific"/>
+		<antcall target="copyConfigProdSpecific"/>
+	</target>
+	
+	<!-- Copies dev specific config files...basically does dev specific token filtering
+	Will only be executed if doDevBuild property is set-->
+	<target name="copyConfigDevSpecific" if="doDevBuild">
+		<echo>Inside copyConfigDevSpecific</echo>
+		<copy todir="${web.dir}/WEB-INF/" overwrite="yes" filtering="true">
+			<fileset dir="${build.config}">
+				<include name="jdbc.properties" />
+				<include name="SystemProperties.properties" />
+				<include name="applicationContext.xml" />
+				<include name="dataAccessContext.xml" />
+			</fileset>
+			<filterset>
+				<filter token="jdbc.url" value="${jdbc.url}"/>
+				<filter token="jdbc.username" value="${jdbc.username}"/>
+				<filter token="jdbc.password" value="${jdbc.password}"/>
+				<filter token="absoluteContextPath" value="${absoluteContextPath}"/>
+				<filter token="appTempDir" value="${appTempDir}"/>
+				<filter token="java.mailsender.impl" value="${java.mailsender.impl}"/>
+				<filter token="hibernate.show_sql" value="${hibernate.show_sql}"/>
+				
+			</filterset>
+		</copy>
+		<copy todir="${web.dir}/WEB-INF/classes" overwrite="no" filtering="true">
+			<fileset dir="${build.config}">
+				<include name="log4j.xml" />
+			</fileset>
+			<filterset>
+				<filter token="log.file" value="${log.file}"/>
+			</filterset>
+			
+		</copy>
+	</target>
+	<!-- Copies prod specific config files...basically does prod specific token filtering
+	Will only be executed if doProdBuild property is set-->	
+	<target name="copyConfigProdSpecific" if="doProdBuild">
+		<echo>Inside copyConfigProdSpecific</echo>
+		<copy todir="${web.dir}/WEB-INF/" overwrite="yes" filtering="true">
+			<fileset dir="${build.config}">
+				<include name="jdbc.properties" />
+				<include name="SystemProperties.properties" />
+				<include name="applicationContext.xml" />
+				<include name="dataAccessContext.xml" />
+			</fileset>
+			<filterset>
+				<filter token="jdbc.url" value="${jdbc.url.prod}"/>
+				<filter token="jdbc.username" value="${jdbc.username.prod}"/>
+				<filter token="jdbc.password" value="${jdbc.password.prod}"/>
+				<filter token="absoluteContextPath" value="${absoluteContextPath.prod}"/>
+				<filter token="appTempDir" value="${appTempDir.prod}"/>
+				<filter token="java.mailsender.impl" value="${java.mailsender.impl.prod}"/>
+				<filter token="hibernate.show_sql" value="${hibernate.show_sql.prod}"/>
+				
+			</filterset>
+		</copy>
+		<copy todir="${web.dir}/WEB-INF/classes" overwrite="no" filtering="true">
+			<fileset dir="${build.config}">
+				<include name="log4j.xml" />
+			</fileset>
+			<filterset>
+				<filter token="log.file" value="${log.file.prod}"/>
+			</filterset>
+
+		</copy>
+	</target>
+
+
+	
+	<target name="copyHibernateMappings">
+		<copy todir="${build.dir}" overwrite="no" filtering="true">
+			<fileset dir="${src.dir}">
+				<include name="**/*.hbm.xml" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="copyCastorMappings">
+			<copy todir="${build.dir}" overwrite="no" filtering="true">
+				<fileset dir="${src.dir}">
+					<include name="**/*mapping.xml" />
+				</fileset>
+			</copy>
+	</target>
+	
+	<!-- Run the JUnit test suites
+	-->
+	<target name="tests" depends="compileTests">
+		<tstamp/>
+ 		<mkdir dir="${reports.dir}"/>
+  		<junit printsummary="yes" haltonfailure="yes">
+		  <classpath refid="test-classpath"/>		
+		  <formatter type="plain"/> 	  
+		  <!-- Convention is that our JUnit test classes have names like
+		   XXXXTests.java
+		   -->
+		  <batchtest fork="yes" todir="${reports.dir}">
+		      <fileset dir="${src.test.dir}">
+			    <include name="**/*Tests.java"/>
+		      	<exclude name="**/AbstractServiceTests.java"/>
+		      </fileset>
+		  </batchtest>
+  		</junit>
+	</target>
+
+
+<!-- ============================================================== -->
+<!-- Tomcat tasks - remove these if you don't have Tomcat installed -->
+<!-- ============================================================== -->
+
+    <!--<taskdef name="install" classname="org.apache.catalina.ant.InstallTask">
+        <classpath>
+            <path location="${appserver.home}/server/lib/catalina-ant.jar"/>
+        </classpath>
+    </taskdef>
+    <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
+        <classpath>
+            <path location="${appserver.home}/server/lib/catalina-ant.jar"/>
+        </classpath>
+    </taskdef>
+    <taskdef name="list" classname="org.apache.catalina.ant.ListTask">
+        <classpath>
+            <path location="${appserver.home}/server/lib/catalina-ant.jar"/>
+        </classpath>
+    </taskdef>
+    <taskdef name="start" classname="org.apache.catalina.ant.StartTask">
+        <classpath>
+            <path location="${appserver.home}/server/lib/catalina-ant.jar"/>
+        </classpath>
+    </taskdef>
+    <taskdef name="stop" classname="org.apache.catalina.ant.StopTask">
+        <classpath>
+            <path location="${appserver.home}/server/lib/catalina-ant.jar"/>
+        </classpath>
+    </taskdef>
+
+    <target name="install" description="Install application in Tomcat">
+        <install url="${tomcat.manager.url}"
+                 username="${tomcat.manager.username}"
+                 password="${tomcat.manager.password}"
+                 path="/${name}"
+                 war="${name}"/>
+    </target>
+
+    <target name="reload" description="Reload application in Tomcat">
+        <reload url="${tomcat.manager.url}"
+                 username="${tomcat.manager.username}"
+                 password="${tomcat.manager.password}"
+                 path="/${name}"/>
+    </target>
+
+    <target name="start" description="Start Tomcat application">
+        <start url="${tomcat.manager.url}"
+                 username="${tomcat.manager.username}"
+                 password="${tomcat.manager.password}"
+                 path="/${name}"/>
+    </target>
+
+    <target name="stop" description="Stop Tomcat application">
+        <stop url="${tomcat.manager.url}"
+                 username="${tomcat.manager.username}"
+                 password="${tomcat.manager.password}"
+                 path="/${name}"/>
+    </target>
+
+    <target name="list" description="List Tomcat applications">
+        <list url="${tomcat.manager.url}"
+                 username="${tomcat.manager.username}"
+                 password="${tomcat.manager.password}"/>
+    </target>-->
+
+<!-- End Tomcat tasks -->
+
+</project>

@@ -1,0 +1,24 @@
+<html>
+<body>
+<div>
+Hi ${user.firstname},<br><br>
+
+Your delivery request has been received.<br><br> 
+
+If your delivery request is received before 2 PM on a working day, we will hand over the books to our logistics partner on the same day. 
+Otherwise the books are sent out the next working day.
+After receiving the books, our logistics partner takes 1-2 working days to deliver the books to you.<br><br>
+
+If you have already read all the books allowed per month as per your plan, then your books will be sent out at 
+the beginning of your next subscription month.<br><br>
+
+Thank you and happy reading,<br>
+FriendsOfBooks&#0153;<br>
+Web: <a href="http://www.friendsofbooks.com">http://www.friendsofbooks.com</a><br> 
+Email: admin@friendsofbooks.com<br>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,18 @@
+<html>
+<body>
+<div>
+Hello ${user.firstname} ${user.lastname},<br><br> 
+
+Your payment request has been received. We will send our delivery person to pickup the payment from you.
+If you are paying by cheque, please make the cheque payable to "Friends Of Books"<br><br> 
+
+Thank you,<br><br> 
+
+FriendsOfBooks&#0153;<br>
+Web: <a href="http://www.friendsofbooks.com">http://www.friendsofbooks.com</a><br> 
+Email: cs@friendsofbooks.com<br>
+
+</div>
+</body>
+
+</html>

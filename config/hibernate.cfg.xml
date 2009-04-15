@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration
+    PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <mapping resource="com/sparrow/domain/Category.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/Author.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/Company.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/Product.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/ProductCategory.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/User.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/UserRole.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/Address.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/UserProduct.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/UserProductHistory.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/ProductInstance.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/Payment.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/HomeProduct.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/DeliveryRequest.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/City.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/SubscriptionPlan.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/Bill.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/UserSearch.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/UserPlan.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/UserNote.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/ProductSearch.hbm.xml"/>
+    <mapping resource="com/sparrow/domain/ProductReview.hbm.xml"/>
+    
+    <!-- Test mapping...can be removed later -->
+    <mapping resource="com/sparrow/domain/TestOrder.hbm.xml"/>
+    
+  </session-factory>
+</hibernate-configuration>

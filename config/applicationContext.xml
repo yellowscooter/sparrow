@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  - Application context definition for JPetStore's business layer.
+  - Contains bean references to the transaction manager and to the DAOs in
+  - dataAccessContext-local/jta.xml (see web.xml's "contextConfigLocation").
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+
+	<!-- ========================= GENERAL DEFINITIONS ========================= -->
+	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
+
+	<!--
+		- Message source for this context, loaded from localized "validatorMessages_xx" files.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within web tier.
+    -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+	      <list>
+	        <value>messages</value>
+	      </list>
+	    </property>
+	</bean>
+	
+
+	<!-- MailSender used by EmailAdvice -->
+	<bean id="mailSender" class="@java.mailsender.impl@">
+      <property name="host" value="${mail.host}"/>
+    </bean>
+
+    <bean id="mailUtil" class="com.sparrow.service.util.MailUtil">
+      <property name="mailSender" ref="mailSender"/>
+      <property name="velocityEngine" ref="velocityEngine"/>
+      <property name="messageSource" ref="messageSource"/>
+      <property name="adminEmailAddress" value="${adminEmailAddress}"/>
+      <property name="secondaryAdminEmailAddress" value="${secondaryAdminEmailAddress}"/>
+      <property name="customerServiceEmailAddress" value="${customerServiceEmailAddress}"/>
+      <property name="pickupEmailAddress" value="${pickupEmailAddress}"/>
+      <property name="newRegistrationEmailAddress" value="${newRegistrationEmailAddress}"/>
+    </bean>
+   
+    <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+      <property name="velocityProperties">
+         <value>
+            resource.loader=class
+            class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+         </value>
+      </property>
+    </bean>
+    
+    <!-- Your application may use the StringDigester in several places,    --> 
+    <!-- like for example at new user sign-up.                             --> 
+    <bean id="stringDigester" class="org.jasypt.digest.StandardStringDigester" >
+      <property name="algorithm" value="SHA-1" />
+      <property name="iterations" value="10000" />
+    </bean>
+
+	<!-- This Spring Security-friendly PasswordEncoder implementation will -->
+    <!-- wrap the StringDigester instance so that it can be used from      -->
+    <!-- the security framework.                                           -->
+    <bean id="passwordEncoder" class="org.jasypt.spring.security.PasswordEncoder">
+      <property name="stringDigester">
+        <ref bean="stringDigester" />
+      </property>
+    </bean>
+    
+    
+
+	<!-- ========================= BUSINESS OBJECT DEFINITIONS ======================== -->
+	<bean id="categoryService" class="com.sparrow.service.catalog.CategoryServiceImpl">
+		<property name="categoryDao" ref="categoryDao"/>
+	</bean>
+	
+	<bean id="productService" class="com.sparrow.service.catalog.ProductServiceImpl">
+		<property name="productDao" ref="productDao"/>
+		<property name="imagesDir" value="${imagesDirectory}"/>
+		<property name="categoryService" ref="categoryService"/>
+		<property name="castorProductListUtil" ref="castorProductListUtil"/>
+		<property name="appTempDir" value="${appTempDir}"/>
+		<property name="absoluteContextPath" value="${absoluteContextPath}"/>
+		<property name="productListPageSize" value="${productListPageSize}"/>
+		<property name="userDao" ref="userDao"/>
+		<property name="utilDao" ref="utilDao"/>
+		<property name="mailUtil" ref="mailUtil"/>
+	</bean>
+	
+	<bean id="userService" name="userService" class="com.sparrow.service.user.UserServiceImpl">
+		<property name="userDao" ref="userDao"/>
+		<property name="deliveryRequestService" ref="deliveryRequestService"/>
+		<property name="passwordValidationUtil" ref="passwordValidationUtil"/>
+		<property name="subscriptionPlanService" ref="subscriptionPlanService"/>
+		<property name="paymentService" ref="paymentService"/>
+		<property name="stringDigester" ref="stringDigester"/>
+		<property name="mailUtil" ref="mailUtil"/>
+		<property name="userListPageSize" value="${userListPageSize}"/>
+		<property name="membershipExpirationThreshold" value="${membershipExpirationThreshold}"/>
+		<property name="billService" ref="billService"/>
+		<property name="utilDao" ref="utilDao"/>
+	</bean>
+	
+	<bean id="paymentService" class="com.sparrow.service.payment.PaymentServiceImpl">
+		<property name="paymentDao" ref="paymentDao"/>
+	</bean>
+	
+	<bean id="homeProductService" class="com.sparrow.service.catalog.HomeProductServiceImpl">
+		<property name="homeProductDao" ref="homeProductDao"/>
+		<property name="productService" ref="productService"/>
+	</bean>
+	
+	
+	<bean id="deliveryRequestService" class="com.sparrow.service.deliveryrequest.DeliveryRequestServiceImpl">
+		<property name="deliveryRequestDao" ref="deliveryRequestDao"/>
+		<property name="productService" ref="productService"/>
+		<property name="userDao" ref="userDao"/>
+		<property name="mailUtil" ref="mailUtil"/>
+		<property name="maxAllowedProductsPerDeliveryRequest" value="${maxAllowedProductsPerDeliveryRequest}"/>
+	</bean>
+	
+	<bean id="subscriptionPlanService" class="com.sparrow.service.subscription.SubscriptionPlanServiceImpl">
+		<property name="subscriptionPlanDao" ref="subscriptionPlanDao"/>
+	</bean>
+	
+	<bean id="billService" class="com.sparrow.service.bill.BillServiceImpl">
+		<property name="billDao" ref="billDao"/>
+		<property name="messageSource" ref="messageSource"/>
+	</bean>
+	
+  <!-- the transactional advice (i.e. what 'happens'; see the <aop:advisor/> bean below) -->
+  <tx:advice id="txAdvice" transaction-manager="transactionManager">
+    <!-- the transactional semantics... -->
+    <tx:attributes>
+      <!-- all methods starting with 'get' are read-only -->
+      <tx:method name="get*" read-only="true"/>
+      <!-- all methods starting with 'load' are read-only -->
+      <tx:method name="load*" read-only="true"/>
+      <!-- making find* methods non readonly since ProductService.findActiveBooks
+      saves the search string to the db -->
+      <!-- <tx:method name="find*" read-only="true"/> -->
+      <!-- other methods use the default transaction settings (see below) -->
+      <tx:method name="*"/>
+    </tx:attributes>
+  </tx:advice>
+  
+    <!-- ensure that the above transactional advice runs for any execution
+      of an operation defined by the Service interface -->
+  <aop:config>
+    <aop:pointcut id="serviceMethods" expression="execution(* com.sparrow.service.*.*Service.*(..))"/>
+    <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
+  </aop:config>
+  
+  
+  
+  <!-- Domain object validators -->
+  <bean id="userValidator" class="com.sparrow.service.user.UserValidator">
+	  <property name="minPasswordLength" value="${minPasswordLength}"/>
+	  <property name="userService" ref="userService" />
+	  <property name="addressValidator" ref="addressValidator" />
+  </bean>
+  
+  <bean id="paymentValidator" class="com.sparrow.service.payment.PaymentValidator">
+	  <property name="addressValidator" ref="addressValidator" />
+  </bean>
+  
+  <bean id="passwordValidationUtil" class="com.sparrow.service.user.PasswordValidationUtil">
+	  <property name="minPasswordLength" value="${minPasswordLength}"/>
+	  <property name="stringDigester" ref="stringDigester"/>
+  </bean>
+  
+  <bean id="addressValidator" class="com.sparrow.service.common.AddressValidator"/>
+
+  <bean id="changePasswordValidator" class="com.sparrow.service.user.ChangePasswordValidator">
+  	  <property name="minPasswordLength" value="${minPasswordLength}"/>
+  	  <property name="passwordValidationUtil" ref="passwordValidationUtil" />
+  </bean>
+
+  <bean id="bookValidator" class="com.sparrow.service.catalog.BookValidator"/>
+	
+  <bean id="productInstanceValidator" class="com.sparrow.service.catalog.ProductInstanceValidator"/>
+  
+  <!-- Listens for user login event and updates the last login time -->
+  <bean class="com.sparrow.service.user.UserLoginListener" >
+    <property name="userService" ref="userService" />
+  </bean>
+  
+  <bean id="searchCriteriaValidator" class="com.sparrow.service.catalog.SearchCriteriaValidator">
+    <property name="messageSource" ref="messageSource"/>
+  </bean>
+  
+  <bean id="checkoutValidator" class="com.sparrow.service.deliveryrequest.CheckoutValidator">
+    <property name="productService" ref="productService"/>
+  </bean>
+  
+  <bean id="returnValidator" class="com.sparrow.service.deliveryrequest.ReturnValidator">
+	<property name="productService" ref="productService"/>
+  </bean>
+  
+  <bean id="authorValidator" class="com.sparrow.service.catalog.AuthorValidator">
+	<property name="productService" ref="productService"/>
+  </bean>
+  
+  <bean id="emailMessageValidator" class="com.sparrow.service.common.EmailMessageValidator">
+  </bean>
+  
+  <bean id="billCreatorJobBean" class="com.sparrow.service.bill.BillCreatorJob">
+    <property name="userService" ref="userService" />
+    <property name="billService" ref="billService" />
+    <property name="mailUtil" ref="mailUtil"/>
+  </bean>
+  
+  
+  <!--  Util Classes -->
+  <bean id="castorProductListUtil" class="com.sparrow.service.util.CastorProductListUtil">
+  	  <property name="appTempDir" value="${appTempDir}"/>
+  	  <property name="productFileName" value="${productFileName}"/>
+  </bean>
+  
+  <bean id="hibernateTestService" class="com.sparrow.service.test.HibernateTestService">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+  </bean>
+  
+  <!--  Quartz jobs -->
+  <bean id="methodInvokingBillCreatorJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="billCreatorJobBean" />
+    <property name="targetMethod" value="createBills" />
+  </bean>
+  
+  <bean id="billCreatorJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+   	<property name="jobDetail" ref="methodInvokingBillCreatorJob" />
+    <property name="cronExpression" value="0 0 22 * * ?" />
+  </bean>
+  
+  <!-- Quartz scheduler factory -->
+  <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+   	<property name="triggers" >	
+   		<list>
+   		  <ref bean="billCreatorJobTrigger"/>
+   		</list>
+   	</property>	
+  </bean>	
+	
+</beans>

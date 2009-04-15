@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-pool.jar"/>
+	<classpathentry sourcepath="D:/software/spring-framework-2.0.8/dist/spring-src.zip" kind="lib" path="war/WEB-INF/lib/spring.jar"/>
+	<classpathentry kind="lib" path="vendor/spring/spring-mock.jar"/>
+	<classpathentry kind="lib" path="vendor/junit/junit.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/hibernate3.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/ehcache-1.2.4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-aspects.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-collections.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/log4j-1.2.14.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/aopalliance.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/cglib-nodep-2.1_3.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="vendor/j2ee/servlet-api.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jta.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/oro-2.0.8.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/standard.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jstl.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-lang.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-fileupload.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-io.jar"/>
+	<classpathentry sourcepath="D:/software/displaytag-1.1.jar" kind="lib" path="war/WEB-INF/lib/displaytag-1.1.jar"/>
+	<classpathentry kind="lib" path="vendor/j2ee/jsp-api.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/c3p0-0.9.1.2.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-validator-1.3.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/aspectjweaver.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/castor-1.1.2.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/velocity-1.5.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/mail.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/activation.jar"/>
+	<classpathentry kind="lib" path="war"/>
+	<classpathentry kind="lib" path="config/velocity-templates"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/mysql-connector-java-5.1.5-bin.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/icu4j-3.4.4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jasypt-1.4.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/acegi-security-1.0.7.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/quartz-1.6.4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/lucene-core-2.4.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

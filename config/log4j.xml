@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+    <appender name="ConsAppender" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ISO8601} %-5p [%t][%c] - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="File" class="org.apache.log4j.RollingFileAppender">
+	<!-- Can be Absolute Path, or filename.  If the value starts with / (unix) or C:/ (NT)
+	     This will be considered as an absolute path, else the file will be placed in the 
+	     classes directory -->
+		<param name="File" value="@log.file@"/>
+		<param name="Append" value="true"/>
+		<param name="MaxFileSize" value="10MB"/>
+		<param name="MaxBackupIndex" value="10"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d [%t] %-5p %c - %m%n"/>
+		</layout>
+    </appender>
+
+    <root>
+        <priority value="DEBUG"/>
+        <appender-ref ref="File"/>
+    </root>
+
+</log4j:configuration>

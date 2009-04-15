@@ -1,0 +1,31 @@
+<html>
+<body>
+<div>
+Hi ${user.firstname},<br><br>
+
+Welcome to FriendsOfBooks!<br><br> 
+
+
+As a member of FriendsOfBooks, you can now start adding books to your "Bookshelf" by clicking on the "Add to Bookshelf" button. Once you do that,  
+we will get in touch with you regarding the delivery of your first set of books and pick-up of your subscription payment.<br><br>
+
+In addition to book rental, as a member you can also buy books through FriendsOfBooks for 10% off the market price! Whats more delivery is free. 
+For details please visit the <a href="http://www.friendsofbooks.com/faq.htm#e1">FAQ</a> page.<br><br>
+
+Please visit our <a href="http://www.friendsofbooks.com/howitworks.htm?tab=3">How It Works</a> and <a href="http://www.friendsofbooks.com/faq.htm">FAQ</a> pages for more information.
+If you have a question we have not answered or if you would like to get in touch, please click on the <a href="http://www.friendsofbooks.com/contact.htm">Contact Us</a> link on our website. 
+We will be glad to walk you through <a href="http://www.friendsofbooks.com">http://www.friendsofbooks.com</a>!<br><br>
+
+
+Thank you and happy reading,<br>
+FriendsOfBooks<br>
+Blog: <a href="http://friendsofbooks.wordpress.com">http://friendsofbooks.wordpress.com</a><br> 
+Facebook: <a href="http://www.new.facebook.com/group.php?gid=24756083025">FriendsOfBooks Facebook Group</a><br>
+Twitter: <a href="http://twitter.com/FriendsOfBooks">http://twitter.com/FriendsOfBooks</a><br> 
+
+Email: cs@friendsofbooks.com<br>
+Phone: +91 93106 06880<br>
+</div>
+</body>
+
+</html>
